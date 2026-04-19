@@ -1,9 +1,8 @@
 "use client";
 
-import { motion,Variants } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import React from "react";
-import { useRef } from "react";
+import { motion, Variants } from "framer-motion";
+import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
+import React, { useRef, useState } from "react";
 
 const expertiseCards = [
   {
@@ -16,7 +15,8 @@ const expertiseCards = [
       "Slimme strategie gebouwd op data. Zo weet je precies wat werkt en wat niet. Nooit meer content zonder strategie.",
     top: "top-[56px]",
     z: "z-10",
-    emoji: "📊",
+    image:
+      "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80",
   },
   {
     number: "02",
@@ -28,7 +28,8 @@ const expertiseCards = [
       "Content die stopt met scrollen. Beelden die blijven hangen bij jouw doelgroep.",
     top: "top-[76px]",
     z: "z-20",
-    emoji: "🎬",
+    image:
+      "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80",
   },
   {
     number: "03",
@@ -40,7 +41,8 @@ const expertiseCards = [
       "Zichtbaar waar en wanneer het telt. De juiste content, op het juiste moment.",
     top: "top-[96px]",
     z: "z-30",
-    emoji: "⚡",
+    image:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
   },
   {
     number: "04",
@@ -52,7 +54,8 @@ const expertiseCards = [
       "Inzichten die impact maken. Wij laten de cijfers voor je werken.",
     top: "top-[116px]",
     z: "z-40",
-    emoji: "📈",
+    image:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
   },
 ];
 
@@ -141,7 +144,7 @@ interface ExpertiseCardProps {
   description: string;
   top: string;
   z: string;
-  emoji: string;
+  image: string;
 }
 
 function ExpertiseCard({
@@ -153,7 +156,7 @@ function ExpertiseCard({
   description,
   top,
   z,
-  emoji,
+  image,
 }: ExpertiseCardProps) {
   return (
     <section
@@ -194,9 +197,12 @@ function ExpertiseCard({
           </button>
         </div>
 
-        {/* Image placeholder — swap with <Image> */}
-        <div className="w-28 h-28 rounded-2xl bg-black/10 flex-shrink-0 flex items-center justify-center text-3xl">
-          {emoji}
+        <div className="w-28 h-28 overflow-hidden rounded-2xl flex-shrink-0 border border-black/10">
+          <img
+            src={image}
+            alt={title}
+            className="h-full w-full object-cover"
+          />
         </div>
       </div>
     </section>
@@ -242,55 +248,43 @@ function WorkItem({ item, index }: { item: any; index: number }) {
       transition={{ delay: index * 0.15, duration: 0.6 }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      // 1. ADDED VERTICAL OFFSET (Staircase effect)
-      style={{ transform: `translateY(-${index * 70}px)` }}
-      className={`relative aspect-[3.8/5] rounded-[2.5rem] border-[6px] overflow-hidden cursor-pointer ${item.color}`}
+      style={{ transform: `translateY(-${item.offset ?? index * 55}px)` }}
+      className="relative aspect-[3.8/5] overflow-visible"
     >
-      {/* 2. ADDED STATIC IMAGE (Visible when not hovered) */}
-      <img
-        src={item.image}
-        alt={item.title}
-        className="absolute inset-0 w-full h-full object-cover scale-[1.02]"
-      />
-
-      {/* 3. UPDATED VIDEO (Fades in smoothly on hover) */}
-      <video
-        ref={videoRef}
-        muted
-        loop
-        playsInline
-        preload="auto"
-        className={`absolute inset-0 w-full h-full object-cover scale-[1.02] transition-opacity duration-500 ${
-          hovered ? "opacity-100" : "opacity-0"
-        }`}
+      <div
+        className="absolute inset-0 rounded-[3rem] border-[10px] overflow-hidden"
+        style={{ borderColor: item.borderColor, backgroundColor: "#F8F3EE" }}
       >
-        <source src={item.video} type="video/mp4" />
-      </video>
+        <img
+          src={item.image}
+          alt={item.title}
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/8" />
 
-      {/* Card Label Overlay */}
-      <div className="absolute inset-0 p-5 flex flex-col justify-end">
         <motion.div
-          animate={{ y: hovered ? -8 : 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className={`${item.bg} text-white p-6 rounded-[1.8rem] relative shadow-2xl`}
+          whileHover={{ y: -6 }}
+          className="absolute left-6 right-6 bottom-6 rounded-[2rem] bg-white shadow-[0_25px_60px_rgba(0,0,0,0.12)]"
         >
-          {/* Animated Circle Arrow */}
-          <motion.div
-            animate={{
-              rotate: hovered ? 45 : 0,
-              scale: hovered ? 1.1 : 1,
-            }}
-            className="absolute top-4 right-4 bg-white text-black w-9 h-9 rounded-full flex items-center justify-center shadow-lg"
-          >
-            <ArrowUpRight size={20} strokeWidth={3} />
-          </motion.div>
-
-          <h4 className="text-xl font-black leading-tight pr-10 mb-4 tracking-tight">
-            {item.title}
-          </h4>
-
-          <div className="inline-block bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest">
-            {item.brand}
+          <div className="rounded-[2rem] overflow-hidden">
+            <div
+              className="px-6 py-5 text-white"
+              style={{ backgroundColor: item.panelColor }}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-black leading-tight">
+                    {item.title}
+                  </h3>
+                  <span className="mt-3 inline-flex rounded-full bg-white/20 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-white">
+                    {item.brand}
+                  </span>
+                </div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-black shadow-lg">
+                  <ArrowUpRight size={18} strokeWidth={3} />
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -309,6 +303,8 @@ const badgeVariants: Variants = {
   },
 };
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <main className="bg-[#F2F0EB] min-h-screen text-black font-sans">
       {/* NAV */}
@@ -424,6 +420,46 @@ export default function LandingPage() {
           ))}
 
         </div>
+
+        <div className="mt-16 max-w-7xl mx-auto">
+          <div className="max-w-4xl mb-10">
+            <p className="text-[clamp(1rem,3vw,2rem)] font-black leading-[0.95] tracking-tight">
+              Wij maken content die opvalt. Die blijft hangen. Die jouw doelgroep raakt en jouw merk in beweging brengt. Snel, krachtig en energiek.
+            </p>
+          </div>
+
+          <div className="grid gap-10 lg:grid-cols-[360px_1fr] items-start">
+            <div className="h-[420px] w-full overflow-hidden rounded-[2.5rem] bg-slate-100 shadow-[0_30px_80px_rgba(0,0,0,0.08)]">
+              <img
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"
+                alt="Content creator"
+                className="h-full w-full object-cover"
+              />
+            </div>
+
+            <div className="flex flex-col justify-between gap-8">
+              <div className="space-y-6 max-w-2xl">
+                <p className="text-base leading-7 text-black/90">
+                  We stoppen niet bij mooie plaatjes en vette beelden. We maken het meetbaar. Zo weet je precies wat werkt en wat niet. Nooit meer content zonder strategie. Nooit meer content zonder resultaat.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-8">
+                <button className="inline-flex items-center gap-3 rounded-full border border-black px-6 py-3 text-sm font-bold text-black transition hover:bg-black hover:text-white">
+                  Leer ons kennen
+                  <ArrowRight size={14} />
+                </button>
+                <button
+                  onClick={() => document.getElementById('work-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  aria-label="Scroll naar werk sectie"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-black/10 text-black transition hover:bg-black hover:text-white hover:border-black"
+                >
+                  <span className="text-xl">↓</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ── Sticky Stacking Cards ── */}
@@ -436,7 +472,7 @@ export default function LandingPage() {
       {/* After the stack — sits on top naturally */}
       {/* ── Content Dat Scoort Section (Work) ── */}
       {/* 1. Added more top padding (pt-60) to give room for the cards pushing up */}
-<section className="bg-[#F2F0EB] px-10 pt-60 pb-24 relative z-50">
+<section id="work-section" className="bg-[#F2F0EB] px-10 pt-60 pb-24 relative z-50">
   <div className="max-w-7xl mx-auto">
     {/* Header */}
     <div className="max-w-2xl mb-16">
@@ -462,28 +498,31 @@ export default function LandingPage() {
 
     {/* Video Grid */}
     {/* 2. Added items-start to allow the cards to sit at different heights */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-end">
       {[
         {
           title: "Van nul naar vol, binnen 3 weken",
           brand: "Bullit",
-          video: "https://cdn.pixabay.com/video/2020/09/11/49383-457313094_tiny.mp4",
-          color: "border-[#FF4D00]",
-          bg: "bg-[#FF4D00]",
+          image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=900&q=80",
+          borderColor: "#FF4D00",
+          panelColor: "#FF4D00",
+          offset: 0,
         },
         {
           title: "Zacht in smaak, sterk in beeld",
           brand: "Roasta",
-          video: "https://cdn.pixabay.com/video/2021/04/13/70989-537480746_tiny.mp4",
-          color: "border-[#2B69F5]",
-          bg: "bg-[#2B69F5]",
+          image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=80",
+          borderColor: "#2B69F5",
+          panelColor: "#2B69F5",
+          offset: 60,
         },
         {
           title: "Content die écht smaakt (en raakt)",
           brand: "Loco",
-          video: "https://cdn.pixabay.com/video/2022/10/18/135338-762283313_tiny.mp4",
-          color: "border-[#3DD68C]",
-          bg: "bg-[#3DD68C]",
+          image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+          borderColor: "#3DD68C",
+          panelColor: "#3DD68C",
+          offset: 120,
         },
       ].map((item, idx) => {
         return (
