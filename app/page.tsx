@@ -308,10 +308,10 @@ export default function LandingPage() {
   return (
     <main className="bg-[#F2F0EB] min-h-screen text-black font-sans">
       {/* NAV */}
-      <nav className="flex justify-between items-center px-10 py-4">
+      <nav className="relative flex items-center justify-between px-10 py-4">
         <span className="font-black text-lg">GETHYPED</span>
 
-        <div className="flex gap-1 border border-black/15 rounded-full px-2 py-1 bg-white/60 backdrop-blur-sm">
+        <div className="hidden md:flex gap-1 border border-black/15 rounded-full px-2 py-1 bg-white/60 backdrop-blur-sm">
           {["Expertises", "Work", "About", "Contact"].map((l) => (
             <a
               key={l}
@@ -323,9 +323,55 @@ export default function LandingPage() {
           ))}
         </div>
 
-        <button className="bg-pink-200 text-black text-xs font-bold px-4 py-2 rounded-full">
-          Get Results 🔥
+        <div className="hidden md:inline-flex">
+          <button className="bg-pink-200 text-black text-xs font-bold px-4 py-2 rounded-full">
+            Get Results 🔥
+          </button>
+        </div>
+
+        <button
+          type="button"
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black md:hidden"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
+
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 bg-white p-6 md:hidden">
+            <div className="flex items-center justify-between mb-8">
+              <span className="font-black text-lg">GETHYPED</span>
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex flex-col gap-6">
+              {["Expertises", "Work", "About", "Contact"].map((l) => (
+                <a
+                  key={l}
+                  href="#"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-xl font-bold text-black"
+                >
+                  {l}
+                </a>
+              ))}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-4 inline-flex items-center justify-center rounded-full bg-pink-200 px-6 py-3 text-sm font-bold text-black"
+              >
+                Get Results 🔥
+              </button>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* HERO */}
